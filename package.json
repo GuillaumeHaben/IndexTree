@@ -1,0 +1,11 @@
+{
+    "name": "Index Tree",
+    "version": "0.1.0",
+    "author": "Guillaume Haben",
+    "description": "View all the content files of a specified folder",
+    "dependencies": {
+    	"ejs": "~1.0.0",
+    	"express": "~4.1.2",
+    	"node-dir": "~0.1.5"
+    }
+}

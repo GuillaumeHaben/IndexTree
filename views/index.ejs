@@ -1,0 +1,94 @@
+<!DOCTYPE HTML>
+	<html>
+		<head>
+			<meta charset="UTF-8">
+		    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+		    <meta name="viewport" content="width=device-width, initial-scale=1">
+		    <meta name="description" content="View all the content file of a specified folder">
+		    <meta name="author" content="Guillaume Haben">
+
+			<title>Index Tree</title>
+
+			<!-- Bootstrap CSS -->
+			<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+
+			<!-- App CSS -->
+			<link rel="stylesheet" type="text/css" href="/css/app.css">
+
+			<!-- jsTree Theme -->
+			<link rel="stylesheet" href="js/themes/default/style.min.css" />
+
+    		<!-- Just for debugging purposes. Don't actually copy this line! -->
+    		<!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+    		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    		<!--[if lt IE 9]>
+      			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    		<![endif]-->
+
+		</head>
+
+		<body>
+			
+			<div class="container">
+				<h1>Tree View of my files</h1>
+				<div id="jstree_demo"></div>
+			</div>
+		</body>
+		<script src="js/libs/jquery.js"></script>
+		<script src="js/jstree.min.js"></script>
+		<script type="text/javascript"> <!-- http://stackoverflow.com/questions/6232753/convert-delimited-string-into-hierarchical-json-with-jquery -->
+			var input = <%- JSON.stringify(array) %>;
+			var output = [];
+			for (var i = 0; i < input.length; i++) {
+
+			    var chain = input[i].split("\\");
+				var reg = new RegExp('..\\\\');
+				input[i] = input[i].replace(reg, '');
+
+			    var currentNode = output;
+			    for (var j = 1; j < chain.length; j++) {
+			        var wantedNode = chain[j];
+			        var lastNode = currentNode;
+			        for (var k = 0; k < currentNode.length; k++) {
+			            if (currentNode[k].text == wantedNode) {
+			            	currentNode[k].type = "folder";
+			                currentNode = currentNode[k].children;
+			                break;
+			            }
+			        }
+			        // If we couldn't find an item in this list of children
+			        // that has the right name, create one:
+			        if (lastNode == currentNode) {
+			            var newNode = currentNode[k] = {text: wantedNode, type: "file", children: []};
+			            currentNode = newNode.children;
+			        }
+			    }
+			}
+		</script>
+		<script type="text/javascript">
+		$('#jstree_demo').jstree({
+		  "core" : {
+		    "animation" : 200,
+		    "check_callback" : true,
+		    "themes" : { "stripes" : true },
+		    'data' : output
+		  },
+		  "types" : {
+		    "default" : {
+		      "valid_children" : ["default","file"]
+		    },
+		    "file" : {
+		      "icon" : "glyphicon glyphicon-file",
+		      "valid_children" : []
+		    }
+		  },
+		  "plugins" : [
+		    "contextmenu", "dnd", "search",
+		    "state", "types", "wholerow"
+		  ]
+		});
+		</script>
+	</html>
+
